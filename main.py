@@ -1,11 +1,23 @@
 from dash import Dash, html, dcc
 import plotly.express as px
+import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import pandas as pd
+import dbwork
 
 
 app = Dash(__name__)
 
+"""Matt Section"""
+bay_df = pd.read_csv("./ComparisonOut/bay_df.csv")
+bay_df = bay_df.drop("Unnamed: 0", axis=1)
+bay_df = bay_df.T
+states_df = pd.read_csv("./ComparisonOut/states_df.csv")
+states_df = states_df.drop("Unnamed: 0", axis=1)
+
+#Learned graph objects and layout using: https://www.programcreek.com/python/example/103216/plotly.graph_objs.Layout
+bay_fig = go.Figure()
+"""End Matt Section"""
 
 """Shelter Insecurity Figure by Blythe"""
 df=pd.read_csv('Group Data Homeless.csv')
@@ -66,7 +78,19 @@ children = [
         children=["The correlation between median rent\n", "and the number of people experiencing\n", "homelessness in San Francisco is strong.\n",
         "R-squared value= {:.2f}".format(r_squared), "since 2014."],
 
-        style={'float': 'right', 'display': 'inline-block', 'font-family':'Arial'})
+        style={'float': 'right', 'display': 'inline-block', 'font-family':'Arial'}),
+
+        #Matt Section
+        html.H1(children="Median Housing Prices in Bay Area vs Average Median Housing Counties per State by County", style={"clear":"both", "textAlign":"center"}),
+
+        dcc.Dropdown(id="state",options=dbwork.states_list, value = "national_averages"),
+
+        dcc.Markdown(children="Number of Rooms"),
+
+        dcc.Checklist(id="rooms_check", options=[0,1,2,3,4], value=[0,1,2,3,4]),
+
+        dcc.Graph(id="bay_fig", figure=bay_fig)
+        #End Matt Section
 ])
 
 @app.callback(Output(component_id='correlation_fig', component_property= 'figure'),
@@ -100,6 +124,22 @@ def displaycorrelationfig(dropdown_value, slider_value):
         fig = px.line(newdf, x='Year', y='{}'.format(dropdown_value), color_discrete_sequence=["#004477"])   
 
     return fig
+
+"""Matt Colbert Section"""
+@app.callback(Output(component_id="bay_fig", component_property="figure"),
+                    [Input(component_id="state", component_property="value"),
+                    Input(component_id="rooms_check", component_property="value")])
+
+def display_bay_fig(state, rooms):
+    beds_df = dbwork.average_by_state(states_df, state)
+    bay_fig=go.Figure(layout=go.Layout(xaxis=dict(title="Year"), yaxis=dict(title="Price", range=[0,5000]), title="Comparing Prices", height=1250))
+    for i in bay_df.columns[rooms]:
+        bay_fig.add_trace(go.Scatter(x=bay_df.index, y=bay_df[i], mode="lines+markers", name="bay" + str(i)))
+    for n in beds_df.columns[rooms]:
+        bay_fig.add_trace(go.Scatter(x=beds_df.index, y=beds_df[n], mode="lines+markers", name=state+str(n)))
+    return bay_fig
+
+"""Matt Colbert Section End"""
 
 if __name__ == '__main__':
     app.run_server(debug=True)
