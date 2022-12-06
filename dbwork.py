@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 list_median = []
-main_housing_data = pd.read_csv("clean_2000_2018.csv")
+main_housing_data = pd.read_csv("./clean_2000_2018.csv")
 
 for file in os.listdir("./FY2001-2018-50-percentile/"):
     list_median.append([pd.read_excel("./FY2001-2018-50-percentile/" +file), str(file[2:6])])
