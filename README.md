@@ -2,22 +2,14 @@
 
 Our project, Shelter Insecurity and the Rent Fluctuation Correlation, 
 will determine an interrelationship between the homelessness rate and the variation in rent in the San Francisco Bay Area. 
-We will be analyzing data from the Zillow Observed Rent Index (ZORI), 
-which provides a measure of market rate rent in monthly increments since 2015, and Craigslist data of housing rentals in different neighborhoods. 
+We will be analyzing data from the 50th Percentile Rent Estimates from the Department of Housing and Urban Development,
+which gives the 50th percentile housing price by number of bedrooms per county. 
+We will also use a data set of Craigslist housing rentals in different neighborhoods in the Bay Area. 
 To evaluate the homelessness rate, we will utilize data from the San Francisco Department of Homelessness and Supportive Housing (HSH). 
 These datasets are provided in the form of two-dimensional array data structures, 
 which we will transform with Python packages, such as Pandas, Dash, and Plotly, to make a simple interactive web application to display our information. 
 At the conclusion of this project, we will present a visualization of a real-world problem with an opportunity to see a predictive solution.
 
-
-Rough Outline of what needs to be done on the project
-
-ANALYZE DATA
-- Craigslist Housing Dataset
-  - How the prices have increased
-  - Are there increases in certain areas? (neighborhoods, counties, etc.)
-  - Is there not enough housing in certain areas (low number of high value sales? Other ways to find it out?)
-- Comparison to National Average
-- Comparison to Homeless data
-
-CREATE DASH APP WITH PLOTS
+The Analysis of the Bay Area Housing was done by Ujan.
+The Analysis of Houseless data was done by Blythe.
+The Analysis of the 50th percentile rent estimates was done by Matt.
