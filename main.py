@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import pandas as pd
 import dbwork
+import math
 
 
 app = Dash(__name__)
@@ -22,16 +23,19 @@ bay_fig = go.Figure()
 """Shelter Insecurity Figure by Blythe"""
 df=pd.read_csv('Group Data Homeless.csv')
 
-newdf=df.loc[df['Year']>=2014]
-fig = px.scatter(newdf, x='Median Rent', y='Number of People Experiencing Homelessness', trendline="ols", width=1000, height=500, color_discrete_sequence=["#004477"])
+#Obtaining statistical data from the OLS trendline
+fig = px.scatter(df, x='Median Rent', y='Number of People Experiencing Homelessness', trendline="ols", width=1000, height=500, color_discrete_sequence=["#004477"])
 model = px.get_trendline_results(fig)
-
 results = model.iloc[0]["px_fit_results"]
-alpha = results.params[0]
-beta = results.params[1]
-p_beta = results.pvalues[1]
 r_squared = results.rsquared
-    
+
+recentdf=df.loc[df['Year']>=2014]
+fig = px.scatter(recentdf, x='Median Rent', y='Number of People Experiencing Homelessness', trendline="ols", width=1000, height=500, color_discrete_sequence=["#004477"])
+model = px.get_trendline_results(fig)
+results = model.iloc[0]["px_fit_results"]
+recent_r_squared = results.rsquared
+
+#Configuring app layout  
 app.layout = html.Div(id = 'parent', 
 style={'color': '#004477', 'font-family':'Arial'}, 
 children = [
@@ -75,8 +79,9 @@ children = [
         
         dcc.Markdown(id="correlation_val",
 
-        children=["The correlation between median rent\n", "and the number of people experiencing\n", "homelessness in San Francisco is strong.\n",
-        "R-squared value= {:.2f}".format(r_squared), "since 2014."],
+        #displaying the statistical data next to the Plotly graph
+        children=["Median rent and the number of people\n", "experiencing homelessness in San\n", "Francisco are strongly positively\n", "correlated. The correlation coefficient\n",
+        "is {:.2f}, ".format(math.sqrt(r_squared))+"and it has increased\n", "to {:.2f} ".format(math.sqrt(recent_r_squared),) +" since 2014."],
 
         style={'float': 'right', 'display': 'inline-block', 'font-family':'Arial'}),
 
