@@ -18,6 +18,11 @@ colnames=["state_alpha"]
 for year in list_median:
     colnames.append(year[1])
 
+#Calculating the list of all states and handling the na that is in the list
+states_list = list_median[0][0].state_alpha.unique()
+states_list = np.delete(states_list, 51)
+states_list = np.append(states_list, "national_averages")
+
 #Cleaning the data and handling the type issues in the beds column
 compare_to_states = main_housing_data[["year", "price", "beds"]]
 compare_to_states = compare_to_states.dropna()
@@ -30,11 +35,6 @@ for db in range(len(list_median)):
     for col in list_median[db][0].columns:
         if not(col[4:6] == "50" or col[0:3] == "pop" or col == "state_alpha"  or col[0:2] == "hu" or col.lower() == "countyname"):
             list_median[db][0].drop(col, inplace=True, axis=1)
-
-#Calculating the list of all states and handling the na that is in the list
-states_list = list_median[0][0].state_alpha.unique()
-states_list = np.delete(states_list, 51)
-states_list = np.append(states_list, "national_averages")
 
 #Calculate the median for each combination of year and rooms
 def bay_averages(year, rooms):
@@ -108,5 +108,8 @@ def exporting_dfs():
     bay_df, states_df = creating_dbs()
     bay_df.to_csv(r'./ComparisonOut/bay_df.csv', index=True)
     states_df.to_csv(r'./ComparisonOut/states_df.csv')
+
+if __name__ == "__main__":
+    exporting_dfs()
 
 """End of Matt's Code"""
