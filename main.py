@@ -5,9 +5,15 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import dbwork
 import math
+import datetime
+import json
 
 
-def load_listings_data(path: str):
+def formatted_date(date):
+    year, month, day = date[:4], date[4:6], date[6:]
+    return datetime.date(int(year), int(month), int(day))
+
+def load_listings_data(path):
     with open(path, mode='r') as file:
         data = json.load(file)
 
@@ -17,7 +23,7 @@ def load_listings_data(path: str):
 
     return data
 
-def load_sqft_data(path: str) -> 'list[dict]':
+def load_sqft_data(path):
     with open(path, mode='r') as file:
         return json.load(file)
 
