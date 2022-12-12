@@ -6,7 +6,7 @@ from tools import evaluate_list_literal
 
 def bay_fig(bay_data: pd.DataFrame, states_data: pd.DataFrame,
             state: str, rooms_list: 'list[int]') -> go.Figure:
-    bay_fig = go.Figure(layout=go.Layout(
+    fig = go.Figure(layout=go.Layout(
         xaxis={'title': 'Year'},
         yaxis={'title': 'Price', 'range': [0,5000]},
         title='Comparing Prices',
@@ -14,7 +14,7 @@ def bay_fig(bay_data: pd.DataFrame, states_data: pd.DataFrame,
     ))
 
     for rooms in rooms_list:
-        bay_fig.add_trace(go.Scatter(
+        fig.add_trace(go.Scatter(
             x=bay_data.index, y=bay_data[rooms],
             mode='lines+markers', name=f'bay{rooms}'
         ))
@@ -35,9 +35,9 @@ def bay_fig(bay_data: pd.DataFrame, states_data: pd.DataFrame,
 
     beds_df = state_average()
     for beds in rooms_list:
-        bay_fig.add_trace(go.Scatter(
+        fig.add_trace(go.Scatter(
             x=beds_df.index, y=beds_df[beds],
-            mode='markers', name=f'{state}{beds}'
+            mode='lines+markers', name=f'{state}{beds}'
         ))
 
-    return bay_fig
+    return fig
