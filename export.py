@@ -18,8 +18,8 @@ MEDIAN_DATASET = 'datasets/FY2001-2018-50-percentile/'
 CRAIGSLIST_DATASET = 'datasets/clean_2000_2018.csv'
 HOMELESSNESS_DATASET = 'datasets/Group Data Homeless.csv'
 
-BAY_ALL_PATH = 'data/all_bay_data.json'
-BEDS_PATH = 'data/bay_data.csv'
+LISTINGS_PATH = 'data/all_bay_data.json'
+BEDS_PATH = 'data/beds_data.csv'
 STATES_PATH = 'data/national_data.csv'
 SQFT_PATH = 'data/sqft_data.json'
 HOMELESSNESS_PATH = 'data/homelessness_data.csv'
@@ -174,7 +174,7 @@ def save_national_data(folder: str = MEDIAN_DATASET,
 
 def save_craigslist_data(load_path: str = CRAIGSLIST_DATASET,
                          save_avg_path: str = SQFT_PATH,
-                         save_all_path: str = BAY_ALL_PATH):
+                         save_all_path: str = LISTINGS_PATH):
     """Save average price per square foot data to a JSON file.
 
     The price and square foot data is obtained from a CSV file at the
@@ -219,7 +219,8 @@ def save_craigslist_data(load_path: str = CRAIGSLIST_DATASET,
                  ),
                  'county': county}
                 for year in years
-                for county in counties]
+                for county in counties
+                if county != 'unknown / other']
 
     # Export and save data.
     with open(save_avg_path, mode='w') as file:

@@ -1,22 +1,23 @@
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
-from figures import (bay_fig, craigslist_all_fig, craigslist_avg_fig,
-                     homelessness_fig)
-from load_data import (load_bay_data, load_craigslist_data,
+
+from figures import bay_fig, homelessness_fig, listings_fig, sqft_fig
+from load_data import (load_beds_data, load_listings_data,
                        load_homelessness_data, load_sqft_data,
                        load_states_data)
 from tools import find_correlation
 
+
 BAY_ALL_PATH = 'data/all_bay_data.json'
-BEDS_DATA_PATH = 'data/bay_data.csv'
+BEDS_DATA_PATH = 'data/beds_data.csv'
 HOMELESSNESS_DATA_PATH = 'data/homelessness_data.csv'
 STATES_DATA_PATH = 'data/national_data.csv'
 SQFT_DATA_PATH = 'data/sqft_data.json'
 
 
 if __name__ == '__main__':
-    bay_all = load_craigslist_data(BAY_ALL_PATH)
-    beds_df = load_bay_data(BEDS_DATA_PATH)
+    listings = load_listings_data(BAY_ALL_PATH)
+    beds_df = load_beds_data(BEDS_DATA_PATH)
     homelessness_df = load_homelessness_data(HOMELESSNESS_DATA_PATH)
     states_df = load_states_data(STATES_DATA_PATH)
     sqft_data = load_sqft_data(SQFT_DATA_PATH)
@@ -32,8 +33,8 @@ if __name__ == '__main__':
         'Number of People Experiencing Homelessness'
     )
 
-    craigslist_all_fig = craigslist_all_fig(bay_all)
-    craigslist_avg_fig = craigslist_avg_fig(sqft_data)
+    craigslist_all_fig = listings_fig(listings)
+    craigslist_avg_fig = sqft_fig(sqft_data)
 
     app = Dash(__name__)
 
@@ -60,7 +61,7 @@ if __name__ == '__main__':
             'font-family': 'Arial'
         },
         children=[
-            html.H1(
+            html.H2(
                 id='H1',
                 children='Median Rent vs. People Experiencing Homelessness',
                 style={'textAlign': 'center'}
@@ -117,7 +118,7 @@ if __name__ == '__main__':
                     'font-family':'Arial'
                 }
             ),
-            html.H1(
+            html.H2(
                 children='Median Housing Prices in Bay Area vs Average Median Housing Counties per State by County',
                 style={
                     'clear': 'both',
@@ -141,13 +142,11 @@ if __name__ == '__main__':
                 id='bay_fig',
                 figure=get_bay_fig('US', [*range(5)])
             ),
-            html.H1('Housing Prices in California'),
+            html.H2('Craigslist Data'),
             dcc.Graph(
                 id='craigslist-all-graph',
                 figure=craigslist_all_fig
             ),
-
-            html.H1('Price ($/sqft) vs. Time by County'),
             dcc.Graph(
                 id='average-graph',
                 figure=craigslist_avg_fig
