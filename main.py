@@ -7,6 +7,43 @@ import dbwork
 import math
 
 
+def load_listings_data(path: str):
+    with open(path, mode='r') as file:
+        data = json.load(file)
+
+    # Replace date strings with datetime objects.
+    for listing in data:
+        listing['date'] = formatted_date(listing['date'])
+
+    return data
+
+def load_sqft_data(path: str) -> 'list[dict]':
+    with open(path, mode='r') as file:
+        return json.load(file)
+
+def listings_fig(data):
+    counties = {listing['county'] for listing in data}
+    order = {'county': sorted(counties)}
+    return px.scatter(data, x='date', y='price', color='county',
+                      labels={'price': 'price ($)'},
+                      title='Housing Prices in the Bay Area',
+                      category_orders=order)
+
+def sqft_fig(data):
+    counties = {listing['county'] for listing in data}
+    order = {'county': sorted(counties)}
+    return px.scatter(data, x='year', y='sqft_price',
+                      color='county', trendline='ols',
+                      labels={'sqft_price': 'price ($/sqft)'},
+                      title='Average Prices by Year',
+                      category_orders=order)
+
+listings = load_listings_data('all_bay_data.json')
+sqft_data = load_sqft_data('sqft_data.json')
+
+craigslist_all_fig = listings_fig(listings)
+craigslist_avg_fig = sqft_fig(sqft_data)
+
 app = Dash(__name__)
 
 """Matt Section"""
@@ -94,8 +131,18 @@ children = [
 
         dcc.Checklist(id="rooms_check", options=[0,1,2,3,4], value=[0,1,2,3,4]),
 
-        dcc.Graph(id="bay_fig", figure=bay_fig)
+        dcc.Graph(id="bay_fig", figure=bay_fig),
         #End Matt Section
+        
+        html.H2('Craigslist Data'),
+            dcc.Graph(
+                id='craigslist-all-graph',
+                figure=craigslist_all_fig
+            ),
+            dcc.Graph(
+                id='average-graph',
+                figure=craigslist_avg_fig
+            )
 ])
 
 @app.callback(Output(component_id='correlation_fig', component_property= 'figure'),
